@@ -58,10 +58,51 @@ public class GatoFeliz extends Robot {
 
     // Método chamado quando o robô escaneia outro robô
     public void onScannedRobot(ScannedRobotEvent e) {
-        // Se peek for verdadeiro, o robô escaneia novamente
-        if (peek) {
-            scan();
+        
+        // Cálculo do ângulo para girar a arma
+        double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
+        double gunTurn = absoluteBearing - getGunHeadingRadians();
+
+        // Cálculo da posição futura do robô inimigo
+        double future = e.getVelocity() * Math.sin(e.getHeadingRadians() - absoluteBearing) / Rules.getBulletSpeed(1);
+
+        // Ajuste da arma para atirar na posição futura
+        setTurnGunRightRadians(Utils.normalRelativeAngle(gunTurn + future));
+        
+         // Disparo com potência calculada
+        double firePower = decideFirePower(e);
+        setFire(firePower);
         }
+    
+    public double decideFirePower(ScannedRobotEvent e) {
+        // Método que decide a potência do tiro com base em várias condições.
+        
+        double firePower = getOthers() == 1 ? 2.0 : 3.0;
+        // Se houver apenas um robô inimigo, define a potência do tiro como 2.0. Caso contrário, define como 3.0.
+        
+        if (e.getDistance() > 300) {
+            firePower = 1.0;
+            // Se a distância até o robô inimigo for maior que 300 unidades, define a potência do tiro como 1.0.
+        } else if (e.getDistance() < 100) {
+            firePower = 3.0;
+            // Se a distância até o robô inimigo for menor que 100 unidades, define a potência do tiro como 3.0.
+        }
+
+
+        // Ajusta a potência do tiro com base na energia atual do robô. 
+        // Menor potência se a energia estiver baixa. 
+        if (getEnergy() < 1) {
+            firePower = 0.1;
+            // Se a energia do robô for menor que 1, define a potência do tiro como 0.1.
+        } else if (getEnergy() < 10) {
+            firePower = 1.0;
+            // Se a energia do robô for menor que 10, define a potência do tiro como 1.0.
+        }
+        
+        return Math.min(e.getEnergy() / 4, firePower);
+        // Evita desperdiçar energia garantindo que a potência do tiro não seja maior que um quarto da energia do inimigo.
+    }
+}
     }
 }
 
