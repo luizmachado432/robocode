@@ -80,9 +80,9 @@ public class GatoFeliz extends Robot {
         double firePower = getOthers() == 1 ? 2.0 : 3.0;
         // Se houver apenas um robô inimigo, define a potência do tiro como 2.0. Caso contrário, define como 3.0.
         
-        if (e.getDistance() > 300) {
+        if (e.getDistance() > 200) {
             firePower = 1.0;
-            // Se a distância até o robô inimigo for maior que 300 unidades, define a potência do tiro como 1.0.
+            // Se a distância até o robô inimigo for maior que 200 unidades, define a potência do tiro como 1.0.
         } else if (e.getDistance() < 100) {
             firePower = 3.0;
             // Se a distância até o robô inimigo for menor que 100 unidades, define a potência do tiro como 3.0.
