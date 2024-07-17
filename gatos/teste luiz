@@ -1,12 +1,13 @@
 package kkk;
 
 import robocode.HitRobotEvent;
-import robocode.Robot;
+import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 import java.awt.Color;
 
-public class Teste extends Robot {
+public class Teste extends AdvancedRobot {
+
     // Variáveis para rastreamento
     private String trackName = null; // Nome do robô rastreado
     private double closestDistance = Double.MAX_VALUE; // Distância do robô mais próximo
@@ -20,6 +21,9 @@ public class Teste extends Robot {
         setScanColor(Color.pink);
         setBulletColor(Color.pink);
 
+      	
+		
+			
         // Define moveAmount como o maior valor entre a largura e a altura do campo de batalha
         double moveAmount = Math.max(getBattleFieldWidth(), getBattleFieldHeight());
 
@@ -63,37 +67,30 @@ public class Teste extends Robot {
             ahead(100);
         }
 
-        // Reinicia a busca por novos alvos
-        trackName = null;
-        closestDistance = Double.MAX_VALUE; // Reinicia a distância mais próxima
-        turnRadarRight(360); // Volta a girar o radar para procurar novos alvos
+    
     }
 
     // Método chamado quando o robô escaneia outro robô
     public void onScannedRobot(ScannedRobotEvent e) {
-        // Calcula a distância do robô escaneado
-        double distance = e.getDistance();
+       	
 
-        // Se a distância do robô escaneado for menor que a distância mais próxima
-        if (distance < closestDistance) {
-            closestDistance = distance; // Atualiza a distância mais próxima
-            trackName = e.getName(); // Atualiza o nome do robô rastreado
-        }
+		// Calcula a localização exata do robô
+        double absoluteBearing = getHeading() + e.getBearing();
+        double bearingFromGun = Utils.normalRelativeAngleDegrees(absoluteBearing - getGunHeading());
 
-        // Se estamos rastreando um alvo e o alvo atual não é o mesmo, apenas retorna
-        if (trackName != null && !e.getName().equals(trackName)) {
-            return;
-        }
-
-        // Ajusta a rotação do radar para continuar rastreando o alvo
-        double radarTurn = getHeading() - getRadarHeading() + e.getBearing();
-        turnRadarRight(Utils.normalRelativeAngleDegrees(radarTurn));
-
-        // Ajusta a rotação do canhão para apontar para o alvo
-        double gunTurnAmt = Utils.normalRelativeAngleDegrees(e.getBearing() + (getHeading() - getGunHeading()));
-        turnGunRight(gunTurnAmt);
-
-        // Dispara em direção ao alvo
-        fire(3);
+        // Se estiver perto o suficiente, atira!
+        if (Math.abs(bearingFromGun) <= 3) {
+            turnGunRight(bearingFromGun);
+            // Verificamos o calor da arma aqui, porque chamar fire()
+            // consome um turno, o que poderia nos fazer perder rastreio
+            // do outro robô.
+            if (getGunHeat() == 0) {
+                fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
+            }
+        } else {
+            // caso contrário, apenas ajusta a direção da arma.
+            turnGunRight(bearingFromGun);
+        	
+		}
     }
 }
