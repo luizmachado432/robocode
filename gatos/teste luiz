@@ -42,10 +42,13 @@ public class Teste extends AdvancedRobot {
 
         // Loop infinito para manter o robô se movendo
         while (true) {
-            // Move o robô para a frente pela distância moveAmount
+          
+			// Move o robô para a frente pela distância moveAmount
             ahead(moveAmount);
+			turnGunRight(360);
             // Gira o robô 90 graus para a direita
             turnRight(90);
+			
         }
     }
 
@@ -85,12 +88,12 @@ public class Teste extends AdvancedRobot {
             // consome um turno, o que poderia nos fazer perder rastreio
             // do outro robô.
             if (getGunHeat() == 0) {
-                fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
+                fire(//ajustar o poder de tiro dependendo da distancia);
             }
         } else {
             // caso contrário, apenas ajusta a direção da arma.
             turnGunRight(bearingFromGun);
         	
-		}
+	}
     }
 }
