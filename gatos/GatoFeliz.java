@@ -118,6 +118,27 @@ public class GatoFeliz extends AdvancedRobot {
             return 0.1; // Distância muito longa, força mínima
         }
     }
+
+    	// dancinha da vitória garantida rapaz!
+    private void embrasando() {
+        for (int i = 0; i < 3; i++) {
+		
+        // dança y dança
+        turnLeft(45);
+        turnRight(90);
+        turnLeft(90);
+        turnRight(45);
+		turnLeft(45);
+        turnRight(90);
+        turnLeft(90);
+        turnRight(45);
+        }
+    }
+    // método para rodar a dancinha quando o robo vencer 
+    // gato feliz é muito feliz quando vence
+    public void onWin(WinEvent event) {
+        embrasando();
+    }
 }
 
 
