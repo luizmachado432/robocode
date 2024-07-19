@@ -96,7 +96,7 @@ public class Teste extends AdvancedRobot {
         } else if (distance < 400) {
             return 1.0; // Distância longa, força baixa
         } else {
-            return 0.5; // Distância muito longa, força mínima
+            return 0.0; // Distância muito longa, força mínima
         }
     }
 }
