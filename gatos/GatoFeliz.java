@@ -128,7 +128,7 @@ public class GatoFeliz extends AdvancedRobot {
         turnRight(90);
         turnLeft(90);
         turnRight(45);
-		turnLeft(45);
+	turnLeft(45);
         turnRight(90);
         turnLeft(90);
         turnRight(45);
