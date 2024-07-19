@@ -21,9 +21,6 @@ public class Teste extends AdvancedRobot {
         setScanColor(Color.pink);
         setBulletColor(Color.pink);
 
-      	
-		
-			
         // Define moveAmount como o maior valor entre a largura e a altura do campo de batalha
         double moveAmount = Math.max(getBattleFieldWidth(), getBattleFieldHeight());
 
@@ -42,13 +39,11 @@ public class Teste extends AdvancedRobot {
 
         // Loop infinito para manter o robô se movendo
         while (true) {
-          
-			// Move o robô para a frente pela distância moveAmount
+            // Move o robô para a frente pela distância moveAmount
             ahead(moveAmount);
-			turnGunRight(360);
+            turnGunRight(360);
             // Gira o robô 90 graus para a direita
             turnRight(90);
-			
         }
     }
 
@@ -69,15 +64,11 @@ public class Teste extends AdvancedRobot {
             // Se o robô inimigo estiver atrás, avança 100 unidades
             ahead(100);
         }
-
-    
     }
 
     // Método chamado quando o robô escaneia outro robô
     public void onScannedRobot(ScannedRobotEvent e) {
-       	
-
-		// Calcula a localização exata do robô
+        // Calcula a localização exata do robô
         double absoluteBearing = getHeading() + e.getBearing();
         double bearingFromGun = Utils.normalRelativeAngleDegrees(absoluteBearing - getGunHeading());
 
@@ -88,12 +79,24 @@ public class Teste extends AdvancedRobot {
             // consome um turno, o que poderia nos fazer perder rastreio
             // do outro robô.
             if (getGunHeat() == 0) {
-                fire(//ajustar o poder de tiro dependendo da distancia);
+                fire(calculateFirePower(e.getDistance()));
             }
         } else {
-            // caso contrário, apenas ajusta a direção da arma.
+            // Caso contrário, apenas ajusta a direção da arma.
             turnGunRight(bearingFromGun);
-        	
-	}
+        }
+    }
+
+    // Função para calcular a força de tiro com base na distância
+    public double calculateFirePower(double distance) {
+        if (distance < 100) {
+            return 3.0; // Distância curta, força máxima
+        } else if (distance < 200) {
+            return 2.0; // Distância média, força média
+        } else if (distance < 400) {
+            return 1.0; // Distância longa, força baixa
+        } else {
+            return 0.5; // Distância muito longa, força mínima
+        }
     }
 }
